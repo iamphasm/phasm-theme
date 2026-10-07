@@ -167,6 +167,7 @@ function phasm_contact_submit() {
 		wp_send_json_error( array( 'message' => __( 'Your message could not be saved. Please try again.', 'phasm' ) ), 500 );
 	}
 
+	phasm_log( $post_id, 'received', '' );
 	phasm_send_contact_emails( $post_id );
 
 	wp_send_json_success();
@@ -218,5 +219,9 @@ function phasm_send_contact_emails( $post_id ) {
 		$sent_owner = phasm_mail( $settings['notify'], $subject, $body, array( 'Reply-To: ' . $name . ' <' . $email . '>' ) );
 	}
 
+	phasm_log( $post_id, $sent_customer ? 'copy_sent' : 'copy_failed', '' );
+	if ( $settings['notify'] ) {
+		phasm_log( $post_id, $sent_owner ? 'notify_sent' : 'notify_failed', '' );
+	}
 	update_post_meta( $post_id, '_phasm_mail_status', ( $sent_customer ? 'customer:ok' : 'customer:failed' ) . ' ' . ( $sent_owner ? 'owner:ok' : 'owner:failed' ) );
 }

@@ -2,6 +2,9 @@
 
 Theme by IamPhasm. Every change bumps `Version` in `style.css` and `PHASM_VERSION` in `functions.php`.
 
+## 1.7.0 — 2026-10-07
+- Added: History under the Status box on each message: when it was received, when the copy and notification e-mails went out, every answer sent (or failed), notes added or deleted, and every time it was closed or reopened — with date, time and who did it. Messages from earlier versions get their history rebuilt from what is known.
+
 ## 1.6.0 — 2026-10-07
 - Added: answer an enquiry from Site inbox. Write the answer on the message and press Send answer; it is e-mailed to the customer from your sender address with the signature ("Best Regards, Phasm" by default) and a quote of their message. Earlier answers are listed on the message. Option to close the enquiry after sending.
 - Added: internal notes on each message (Add note), with date and who wrote it. Notes can be deleted and are never sent.

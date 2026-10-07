@@ -264,6 +264,7 @@ add_action(
 		}
 		$closed = (bool) get_post_meta( $id, '_phasm_closed', true );
 		update_post_meta( $id, '_phasm_closed', $closed ? 0 : 1 );
+		phasm_log( $id, $closed ? 'reopened' : 'closed', wp_get_current_user()->display_name );
 		wp_safe_redirect( wp_get_referer() ? wp_get_referer() : admin_url( 'edit.php?post_type=phasm_message' ) );
 		exit;
 	}
@@ -328,6 +329,7 @@ function phasm_message_status_box( $post ) {
 		<?php endif; ?>
 	</p>
 	<?php
+	phasm_print_history( $post->ID );
 }
 
 /**
@@ -437,6 +439,16 @@ add_action(
 		.phasm-notes li{border:1px solid #dcdcde;background:#fcf9e8;padding:8px 12px;margin:0 0 8px}
 		.phasm-notes__meta{display:flex;justify-content:space-between;font-size:12px;color:#50575e;margin-bottom:4px}
 		.phasm-notes__delete{font-size:12px}
+		.phasm-history__title{margin:16px 0 8px;padding-top:12px;border-top:1px solid #dcdcde;font-size:13px}
+		.phasm-history{margin:0;padding:0 0 0 14px;list-style:none;border-left:2px solid #dcdcde}
+		.phasm-history__item{position:relative;margin:0 0 10px;padding-left:4px}
+		.phasm-history__item::before{content:"";position:absolute;left:-21px;top:5px;width:10px;height:10px;border-radius:50%;background:#fff;border:2px solid #8c8f94}
+		.phasm-history__item--received::before,.phasm-history__item--answer_sent::before{background:#007A4D;border-color:#007A4D}
+		.phasm-history__item--closed::before{background:#1d2327;border-color:#1d2327}
+		.phasm-history__item.is-bad::before{background:#b32d2e;border-color:#b32d2e}
+		.phasm-history__item.is-bad .phasm-history__event{color:#b32d2e}
+		.phasm-history__event{display:block;font-weight:600;font-size:12px}
+		.phasm-history__meta{display:block;font-size:11px;color:#50575e}
 		</style>';
 	}
 );
@@ -463,7 +475,11 @@ function phasm_message_save( $post_id ) {
 	$notes = array_values( array_filter( (array) get_post_meta( $post_id, '_phasm_notes', true ) ) );
 	if ( ! empty( $_POST['phasm_delete_notes'] ) ) {
 		$del   = array_map( 'intval', (array) wp_unslash( $_POST['phasm_delete_notes'] ) );
-		$notes = array_values( array_diff_key( $notes, array_flip( $del ) ) );
+		$before = count( $notes );
+		$notes  = array_values( array_diff_key( $notes, array_flip( $del ) ) );
+		for ( $i = count( $notes ); $i < $before; $i++ ) {
+			phasm_log( $post_id, 'note_deleted', $user );
+		}
 	}
 	$note = isset( $_POST['phasm_note'] ) ? trim( sanitize_textarea_field( wp_unslash( $_POST['phasm_note'] ) ) ) : '';
 	if ( '' !== $note ) {
@@ -473,6 +489,7 @@ function phasm_message_save( $post_id ) {
 			'text' => $note,
 		);
 		$result['note'] = 1;
+		phasm_log( $post_id, 'note_added', $user );
 	}
 	update_post_meta( $post_id, '_phasm_notes', $notes );
 
@@ -496,13 +513,18 @@ function phasm_message_save( $post_id ) {
 			);
 			update_post_meta( $post_id, '_phasm_replies', $replies );
 			$result['reply'] = $ok ? 'sent' : 'failed';
+			phasm_log( $post_id, $ok ? 'answer_sent' : 'answer_failed', $user );
 			if ( $ok && ! empty( $_POST['phasm_reply_close'] ) ) {
 				$closed = 1;
 			}
 		}
 	}
 
+	$was_closed = (bool) get_post_meta( $post_id, '_phasm_closed', true );
 	update_post_meta( $post_id, '_phasm_closed', $closed );
+	if ( $was_closed !== (bool) $closed ) {
+		phasm_log( $post_id, $closed ? 'closed' : 'reopened', $user );
+	}
 	set_transient( 'phasm_msg_result_' . get_current_user_id(), $result, 60 );
 }
 add_action( 'save_post_phasm_message', 'phasm_message_save' );
@@ -580,3 +602,123 @@ add_action(
 		}
 	}
 );
+
+
+/* -------------------------------------------------------------------------
+ * History: a dated log of everything that happens to a message.
+ * ---------------------------------------------------------------------- */
+
+/**
+ * Add an entry to a message's history.
+ *
+ * @param int    $post_id Message ID.
+ * @param string $event   received|copy_sent|copy_failed|notify_sent|notify_failed|answer_sent|answer_failed|closed|reopened|note_added|note_deleted.
+ * @param string $user    Who did it ('' = the system / the customer).
+ */
+function phasm_log( $post_id, $event, $user = null ) {
+	if ( null === $user ) {
+		$user = is_user_logged_in() && is_admin() ? wp_get_current_user()->display_name : '';
+	}
+	$history   = array_values( array_filter( (array) get_post_meta( $post_id, '_phasm_history', true ) ) );
+	$history[] = array(
+		'time'  => time(),
+		'event' => $event,
+		'user'  => $user,
+	);
+	update_post_meta( $post_id, '_phasm_history', $history );
+}
+
+/**
+ * Labels for history events.
+ */
+function phasm_history_labels() {
+	return array(
+		'received'      => __( 'Message received', 'phasm' ),
+		'copy_sent'     => __( 'Copy sent to customer', 'phasm' ),
+		'copy_failed'   => __( 'Copy to customer FAILED', 'phasm' ),
+		'notify_sent'   => __( 'Notification sent to you', 'phasm' ),
+		'notify_failed' => __( 'Notification FAILED', 'phasm' ),
+		'answer_sent'   => __( 'Answer sent', 'phasm' ),
+		'answer_failed' => __( 'Answer NOT sent', 'phasm' ),
+		'closed'        => __( 'Closed', 'phasm' ),
+		'reopened'      => __( 'Reopened', 'phasm' ),
+		'note_added'    => __( 'Note added', 'phasm' ),
+		'note_deleted'  => __( 'Note deleted', 'phasm' ),
+	);
+}
+
+/**
+ * The history, oldest first. Messages from before 1.7.0 get their history
+ * rebuilt from what is known: received date, answers and notes.
+ */
+function phasm_get_history( $post_id ) {
+	$history = array_values( array_filter( (array) get_post_meta( $post_id, '_phasm_history', true ) ) );
+	$has_received = false;
+	foreach ( $history as $h ) {
+		if ( 'received' === $h['event'] ) {
+			$has_received = true;
+		}
+	}
+	if ( ! $has_received ) {
+		// Rebuild only what happened before the first logged entry, so nothing appears twice.
+		$first   = $history ? min( wp_list_pluck( $history, 'time' ) ) : PHP_INT_MAX;
+		$rebuilt = array(
+			array(
+				'time'  => (int) get_post_time( 'U', true, $post_id ),
+				'event' => 'received',
+				'user'  => '',
+			),
+		);
+		foreach ( array_filter( (array) get_post_meta( $post_id, '_phasm_replies', true ) ) as $r ) {
+			$rebuilt[] = array(
+				'time'  => (int) $r['time'],
+				'event' => empty( $r['ok'] ) ? 'answer_failed' : 'answer_sent',
+				'user'  => $r['user'],
+			);
+		}
+		foreach ( array_filter( (array) get_post_meta( $post_id, '_phasm_notes', true ) ) as $n ) {
+			$rebuilt[] = array(
+				'time'  => (int) $n['time'],
+				'event' => 'note_added',
+				'user'  => $n['user'],
+			);
+		}
+		foreach ( $rebuilt as $r ) {
+			if ( $r['time'] < $first || 'received' === $r['event'] ) {
+				$history[] = $r;
+			}
+		}
+		usort(
+			$history,
+			function ( $a, $b ) {
+				return $a['time'] - $b['time'];
+			}
+		);
+	}
+	return $history;
+}
+
+/**
+ * Print the history list (used in the Status box).
+ */
+function phasm_print_history( $post_id ) {
+	$labels  = phasm_history_labels();
+	$history = phasm_get_history( $post_id );
+	if ( ! $history ) {
+		return;
+	}
+	echo '<h4 class="phasm-history__title">' . esc_html__( 'History', 'phasm' ) . '</h4><ol class="phasm-history">';
+	foreach ( $history as $h ) {
+		$label = isset( $labels[ $h['event'] ] ) ? $labels[ $h['event'] ] : $h['event'];
+		$bad   = in_array( $h['event'], array( 'copy_failed', 'notify_failed', 'answer_failed' ), true );
+		printf(
+			'<li class="phasm-history__item phasm-history__item--%1$s%2$s"><span class="phasm-history__event">%3$s</span><span class="phasm-history__meta">%4$s%5$s</span></li>',
+			esc_attr( $h['event'] ),
+			$bad ? ' is-bad' : '',
+			esc_html( $label ),
+			esc_html( wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), (int) $h['time'] ) ),
+			$h['user'] ? ' · ' . esc_html( $h['user'] ) : ''
+		);
+	}
+	echo '</ol>';
+}

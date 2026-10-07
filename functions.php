@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'PHASM_VERSION', '1.6.0' ); // Keep in sync with "Version" in style.css.
+define( 'PHASM_VERSION', '1.7.0' ); // Keep in sync with "Version" in style.css.
 
 /**
  * Theme setup.
