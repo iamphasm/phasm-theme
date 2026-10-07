@@ -14,16 +14,21 @@
 			var data = [];
 			$list.children( 'li' ).each( function () {
 				var $li = $( this );
-				var on = $li.find( 'input[type=checkbox]' ).is( ':checked' );
+				var on = $li.find( 'input.phasm-on' ).is( ':checked' );
 				$li.toggleClass( 'is-off', ! on );
-				data.push( { id: $li.data( 'id' ), on: on, scheme: $li.find( 'select' ).val() } );
+				data.push( {
+					id: $li.data( 'id' ),
+					on: on,
+					scheme: $li.find( 'select' ).val(),
+					divider: $li.find( 'input.phasm-divider' ).is( ':checked' )
+				} );
 			} );
 			save( $control, data );
 		}
 
 		$list.sortable( {
 			axis: 'y',
-			handle: '.phasm-modules__handle, label',
+			handle: '.phasm-modules__handle, .phasm-modules__name',
 			cancel: 'input, button, select',
 			update: collect
 		} );

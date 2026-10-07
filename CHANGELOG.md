@@ -2,6 +2,13 @@
 
 Theme by IamPhasm. Every change bumps `Version` in `style.css` and `PHASM_VERSION` in `functions.php`.
 
+## 1.5.0 — 2026-10-07
+- Added: contact form. "Start a conversation" opens it in the middle of the page with the site blurred behind; Name, E-mail, Phone, Message (max 400 characters), Send, Reset and a close button. After sending it shows a thank-you message with the PHASM logo. Links to #contact-form open it from anywhere.
+- Added: Site inbox in the admin, with Messages and Closed messages. Close a message with the Closed checkbox on the message, or Close/Reopen in the list. The menu shows how many messages are open.
+- Added: Site inbox › Email settings: SMTP server, encryption, optional port, username and password (stored encrypted), sender, notification address and a test e-mail. The customer gets a dated copy of their message.
+- Added: spam protection on the form (hidden honeypot field, security token, max 5 messages per 10 minutes per visitor).
+- Changed: the divider line is now switched on or off per module in the Modules list.
+
 ## 1.4.0 — 2026-10-07
 - Added: green divider line above every front page module (on/off in Customize › PHASM front page › Modules).
 - Added: colour scheme per module: Light, Grey or Dark (inverted), picked next to each module in the Modules list.

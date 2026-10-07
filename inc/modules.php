@@ -3,7 +3,7 @@
  * Front page modules and Daily wisdom quotes.
  *
  * Both are stored as JSON strings in theme mods:
- * - phasm_modules:       [{"id":"services","on":true,"scheme":"light"}, …]  (order = display order)
+ * - phasm_modules:       [{"id":"services","on":true,"scheme":"light","divider":true}, …]  (order = display order)
  * - phasm_wisdom_quotes: [{"quote":"…","author":"…"}, …]
  *
  * @package phasm
@@ -58,7 +58,8 @@ function phasm_modules_default() {
 		$out[] = array(
 			'id'     => $id,
 			'on'     => true,
-			'scheme' => phasm_module_default_scheme( $id ),
+			'scheme'  => phasm_module_default_scheme( $id ),
+			'divider' => true,
 		);
 	}
 	return wp_json_encode( $out );
@@ -89,7 +90,9 @@ function phasm_sanitize_modules( $value ) {
 			$out[]       = array(
 				'id'     => $id,
 				'on'     => ! empty( $row['on'] ),
-				'scheme' => isset( $schemes[ $scheme ] ) ? $scheme : phasm_module_default_scheme( $id ),
+				'scheme'  => isset( $schemes[ $scheme ] ) ? $scheme : phasm_module_default_scheme( $id ),
+				// Before 1.5.0 the divider was one global setting; use it when a module has no value yet.
+				'divider' => isset( $row['divider'] ) ? ! empty( $row['divider'] ) : (bool) get_theme_mod( 'modules_divider', true ),
 			);
 		}
 	}
@@ -98,7 +101,8 @@ function phasm_sanitize_modules( $value ) {
 			$out[] = array(
 				'id'     => $id,
 				'on'     => true,
-				'scheme' => phasm_module_default_scheme( $id ),
+				'scheme'  => phasm_module_default_scheme( $id ),
+				'divider' => true,
 			);
 		}
 	}

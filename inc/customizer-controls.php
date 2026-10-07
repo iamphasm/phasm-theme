@@ -33,8 +33,8 @@ class Phasm_Modules_Control extends WP_Customize_Control {
 			<?php foreach ( $modules as $m ) : ?>
 				<li class="phasm-modules__item<?php echo $m['on'] ? '' : ' is-off'; ?>" data-id="<?php echo esc_attr( $m['id'] ); ?>">
 					<span class="phasm-modules__handle dashicons dashicons-menu" title="<?php esc_attr_e( 'Drag to move', 'phasm' ); ?>" aria-hidden="true"></span>
-					<label>
-						<input type="checkbox" <?php checked( $m['on'] ); ?>>
+					<label class="phasm-modules__name">
+						<input type="checkbox" class="phasm-on" <?php checked( $m['on'] ); ?>>
 						<?php echo esc_html( $labels[ $m['id'] ] ); ?>
 					</label>
 					<select class="phasm-modules__scheme" aria-label="<?php echo esc_attr( sprintf( /* translators: %s: module */ __( 'Colours for %s', 'phasm' ), $labels[ $m['id'] ] ) ); ?>">
@@ -42,6 +42,10 @@ class Phasm_Modules_Control extends WP_Customize_Control {
 							<option value="<?php echo esc_attr( $sid ); ?>" <?php selected( $m['scheme'], $sid ); ?>><?php echo esc_html( $slabel ); ?></option>
 						<?php endforeach; ?>
 					</select>
+					<label class="phasm-modules__divider">
+						<input type="checkbox" class="phasm-divider" <?php checked( $m['divider'] ); ?>>
+						<?php esc_html_e( 'Divider line above', 'phasm' ); ?>
+					</label>
 					<span class="phasm-modules__arrows">
 						<button type="button" class="button-link phasm-up" aria-label="<?php echo esc_attr( sprintf( /* translators: %s: module */ __( 'Move %s up', 'phasm' ), $labels[ $m['id'] ] ) ); ?>"><span class="dashicons dashicons-arrow-up-alt2"></span></button>
 						<button type="button" class="button-link phasm-down" aria-label="<?php echo esc_attr( sprintf( /* translators: %s: module */ __( 'Move %s down', 'phasm' ), $labels[ $m['id'] ] ) ); ?>"><span class="dashicons dashicons-arrow-down-alt2"></span></button>
@@ -91,9 +95,10 @@ function phasm_customizer_controls_assets() {
 		'customize-controls',
 		'.phasm-modules{margin:8px 0 0}
 		.phasm-modules__item{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #dcdcde;padding:8px 10px;margin:0 0 6px;cursor:move}
-		.phasm-modules__item.is-off label{color:#8c8f94;text-decoration:line-through}
+		.phasm-modules__item.is-off .phasm-modules__name{color:#8c8f94;text-decoration:line-through}
 		.phasm-modules__item{flex-wrap:wrap}
-		.phasm-modules__item label{flex:1;cursor:pointer;min-width:110px}
+		.phasm-modules__name{flex:1;cursor:pointer;min-width:110px}
+		.phasm-modules__divider{order:4;flex-basis:100%;font-size:12px;color:#50575e;cursor:pointer}
 		.phasm-modules__scheme{order:3;flex-basis:100%;max-width:none!important;min-height:30px!important;font-size:12px!important}
 		.phasm-modules__arrows{order:2;display:flex;gap:2px}
 		.phasm-modules__handle{color:#8c8f94}

@@ -41,7 +41,6 @@ $phasm_hero_img = (int) phasm_mod( 'hero_image' );
 </section>
 
 <?php
-$phasm_dividers = phasm_mod( 'modules_divider' );
 foreach ( phasm_get_modules() as $phasm_module ) {
 	if ( ! $phasm_module['on'] ) {
 		continue;
@@ -58,7 +57,7 @@ foreach ( phasm_get_modules() as $phasm_module ) {
 		$phasm_classes .= ' band-dark';
 	}
 	echo '<div class="' . esc_attr( $phasm_classes ) . '">';
-	if ( $phasm_dividers ) {
+	if ( $phasm_module['divider'] ) {
 		echo '<div class="container module__divider">';
 		phasm_trace_divider();
 		echo '</div>';

@@ -184,7 +184,7 @@ function phasm_customize_register( $wp_customize ) {
 			'phasm_modules',
 			array(
 				'label'       => __( 'Front page modules', 'phasm' ),
-				'description' => __( 'Drag to change the order, untick to hide a module, and pick Light, Grey or Dark (inverted) colours for each. The hero always stays at the top.', 'phasm' ),
+				'description' => __( 'Drag to change the order, untick to hide a module, pick Light, Grey or Dark (inverted) colours, and choose whether each module has the green divider line above it. The hero always stays at the top.', 'phasm' ),
 				'section'     => 'phasm_modules',
 			)
 		)
@@ -206,24 +206,6 @@ function phasm_customize_register( $wp_customize ) {
 			'type'        => 'checkbox',
 			'section'     => 'phasm_about',
 			'priority'    => 50,
-		)
-	);
-
-	// Divider line above every module.
-	$wp_customize->add_setting(
-		'modules_divider',
-		array(
-			'default'           => true,
-			'sanitize_callback' => 'phasm_sanitize_checkbox',
-		)
-	);
-	$wp_customize->add_control(
-		'modules_divider',
-		array(
-			'label'    => __( 'Show the green divider line above each module', 'phasm' ),
-			'type'     => 'checkbox',
-			'section'  => 'phasm_modules',
-			'priority' => 20,
 		)
 	);
 
