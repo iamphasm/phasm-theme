@@ -54,6 +54,7 @@ $phasm_address = phasm_mod( 'contact_address' );
 
 	<div class="container site-footer__bottom">
 		<span>&copy; <?php echo esc_html( gmdate( 'Y' ) . ' ' . get_bloginfo( 'name' ) ); ?></span>
+		<a class="back-to-top" href="#top"><?php esc_html_e( 'Back to top', 'phasm' ); ?> &uarr;</a>
 		<?php if ( function_exists( 'get_privacy_policy_url' ) && get_privacy_policy_url() ) : ?>
 			<a href="<?php echo esc_url( get_privacy_policy_url() ); ?>"><?php esc_html_e( 'Privacy', 'phasm' ); ?></a>
 		<?php endif; ?>

@@ -11,7 +11,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <?php wp_head(); ?>
 </head>
-<body <?php body_class(); ?>>
+<body <?php body_class(); ?> id="top">
 <?php wp_body_open(); ?>
 <a class="screen-reader-text" href="#content"><?php esc_html_e( 'Skip to content', 'phasm' ); ?></a>
 

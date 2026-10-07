@@ -2,6 +2,9 @@
 
 Theme by IamPhasm. Every change bumps `Version` in `style.css` and `PHASM_VERSION` in `functions.php`.
 
+## 1.2.1 — 2026-10-07
+- Added: "Back to top" link in the footer, with smooth scrolling (off when the visitor prefers reduced motion).
+
 ## 1.2.0 — 2026-10-07
 - Added: auto-updates from GitHub releases (iamphasm/phasm-theme), with a "Check for updates now" link on the Themes screen.
 - Added: GitHub Action that builds phasm.zip and publishes a release when a version tag is pushed.
