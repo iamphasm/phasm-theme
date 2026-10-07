@@ -3,7 +3,7 @@
  * Front page modules and Daily wisdom quotes.
  *
  * Both are stored as JSON strings in theme mods:
- * - phasm_modules:       [{"id":"services","on":true}, …]  (order = display order)
+ * - phasm_modules:       [{"id":"services","on":true,"scheme":"light"}, …]  (order = display order)
  * - phasm_wisdom_quotes: [{"quote":"…","author":"…"}, …]
  *
  * @package phasm
@@ -28,14 +28,37 @@ function phasm_module_list() {
 }
 
 /**
+ * Colour schemes a module can use (id => label).
+ */
+function phasm_module_schemes() {
+	return array(
+		'light' => __( 'Light', 'phasm' ),
+		'grey'  => __( 'Grey', 'phasm' ),
+		'dark'  => __( 'Dark (inverted)', 'phasm' ),
+	);
+}
+
+/**
+ * Default colour scheme per module (matches the original design).
+ */
+function phasm_module_default_scheme( $id ) {
+	$map = array(
+		'about' => 'grey',
+		'cta'   => 'dark',
+	);
+	return isset( $map[ $id ] ) ? $map[ $id ] : 'light';
+}
+
+/**
  * Default module order and state, as JSON.
  */
 function phasm_modules_default() {
 	$out = array();
 	foreach ( array_keys( phasm_module_list() ) as $id ) {
 		$out[] = array(
-			'id' => $id,
-			'on' => true,
+			'id'     => $id,
+			'on'     => true,
+			'scheme' => phasm_module_default_scheme( $id ),
 		);
 	}
 	return wp_json_encode( $out );
@@ -46,8 +69,9 @@ function phasm_modules_default() {
  * and any module missing from the saved value is appended (switched on).
  */
 function phasm_sanitize_modules( $value ) {
-	$known = phasm_module_list();
-	$data  = json_decode( (string) $value, true );
+	$known   = phasm_module_list();
+	$schemes = phasm_module_schemes();
+	$data    = json_decode( (string) $value, true );
 	$out   = array();
 	$seen  = array();
 
@@ -61,17 +85,20 @@ function phasm_sanitize_modules( $value ) {
 				continue;
 			}
 			$seen[ $id ] = true;
+			$scheme      = isset( $row['scheme'] ) ? sanitize_key( $row['scheme'] ) : '';
 			$out[]       = array(
-				'id' => $id,
-				'on' => ! empty( $row['on'] ),
+				'id'     => $id,
+				'on'     => ! empty( $row['on'] ),
+				'scheme' => isset( $schemes[ $scheme ] ) ? $scheme : phasm_module_default_scheme( $id ),
 			);
 		}
 	}
 	foreach ( array_keys( $known ) as $id ) {
 		if ( ! isset( $seen[ $id ] ) ) {
 			$out[] = array(
-				'id' => $id,
-				'on' => true,
+				'id'     => $id,
+				'on'     => true,
+				'scheme' => phasm_module_default_scheme( $id ),
 			);
 		}
 	}

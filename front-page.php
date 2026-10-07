@@ -40,13 +40,31 @@ $phasm_hero_img = (int) phasm_mod( 'hero_image' );
 	</div>
 </section>
 
-<div class="container" style="padding-top:var(--space-6)"><?php phasm_trace_divider(); ?></div>
-
 <?php
+$phasm_dividers = phasm_mod( 'modules_divider' );
 foreach ( phasm_get_modules() as $phasm_module ) {
-	if ( $phasm_module['on'] ) {
-		get_template_part( 'template-parts/front/' . $phasm_module['id'] );
+	if ( ! $phasm_module['on'] ) {
+		continue;
 	}
+	// Render the module first, so a module with nothing to show (no posts, no quotes) leaves no empty band.
+	ob_start();
+	get_template_part( 'template-parts/front/' . $phasm_module['id'] );
+	$phasm_html = trim( ob_get_clean() );
+	if ( '' === $phasm_html ) {
+		continue;
+	}
+	$phasm_classes = 'module module--' . $phasm_module['id'] . ' module--' . $phasm_module['scheme'];
+	if ( 'dark' === $phasm_module['scheme'] ) {
+		$phasm_classes .= ' band-dark';
+	}
+	echo '<div class="' . esc_attr( $phasm_classes ) . '">';
+	if ( $phasm_dividers ) {
+		echo '<div class="container module__divider">';
+		phasm_trace_divider();
+		echo '</div>';
+	}
+	echo $phasm_html; // phpcs:ignore WordPress.Security.EscapeOutput -- escaped in the template parts.
+	echo '</div>';
 }
 
 get_footer();

@@ -22,6 +22,7 @@ class Phasm_Modules_Control extends WP_Customize_Control {
 
 	public function render_content() {
 		$labels  = phasm_module_list();
+		$schemes = phasm_module_schemes();
 		$modules = json_decode( phasm_sanitize_modules( $this->value() ), true );
 		?>
 		<span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
@@ -36,6 +37,11 @@ class Phasm_Modules_Control extends WP_Customize_Control {
 						<input type="checkbox" <?php checked( $m['on'] ); ?>>
 						<?php echo esc_html( $labels[ $m['id'] ] ); ?>
 					</label>
+					<select class="phasm-modules__scheme" aria-label="<?php echo esc_attr( sprintf( /* translators: %s: module */ __( 'Colours for %s', 'phasm' ), $labels[ $m['id'] ] ) ); ?>">
+						<?php foreach ( $schemes as $sid => $slabel ) : ?>
+							<option value="<?php echo esc_attr( $sid ); ?>" <?php selected( $m['scheme'], $sid ); ?>><?php echo esc_html( $slabel ); ?></option>
+						<?php endforeach; ?>
+					</select>
 					<span class="phasm-modules__arrows">
 						<button type="button" class="button-link phasm-up" aria-label="<?php echo esc_attr( sprintf( /* translators: %s: module */ __( 'Move %s up', 'phasm' ), $labels[ $m['id'] ] ) ); ?>"><span class="dashicons dashicons-arrow-up-alt2"></span></button>
 						<button type="button" class="button-link phasm-down" aria-label="<?php echo esc_attr( sprintf( /* translators: %s: module */ __( 'Move %s down', 'phasm' ), $labels[ $m['id'] ] ) ); ?>"><span class="dashicons dashicons-arrow-down-alt2"></span></button>
@@ -86,7 +92,10 @@ function phasm_customizer_controls_assets() {
 		'.phasm-modules{margin:8px 0 0}
 		.phasm-modules__item{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #dcdcde;padding:8px 10px;margin:0 0 6px;cursor:move}
 		.phasm-modules__item.is-off label{color:#8c8f94;text-decoration:line-through}
-		.phasm-modules__item label{flex:1;cursor:pointer}
+		.phasm-modules__item{flex-wrap:wrap}
+		.phasm-modules__item label{flex:1;cursor:pointer;min-width:110px}
+		.phasm-modules__scheme{order:3;flex-basis:100%;max-width:none!important;min-height:30px!important;font-size:12px!important}
+		.phasm-modules__arrows{order:2;display:flex;gap:2px}
 		.phasm-modules__handle{color:#8c8f94}
 		.phasm-modules__arrows button{color:#50575e;padding:0}
 		.phasm-modules .ui-sortable-placeholder{border:1px dashed #007A4D;background:#f0faf5;visibility:visible!important;height:36px}

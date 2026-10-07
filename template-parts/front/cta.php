@@ -8,7 +8,7 @@
 
 $phasm_email = phasm_mod( 'contact_email' );
 ?>
-<section id="contact" class="section section--inverse band-dark">
+<section id="contact" class="section">
 	<div class="container cta-band">
 		<div class="cta-band__text">
 			<h2 class="section-title"><?php echo esc_html( phasm_mod( 'cta_title' ) ); ?></h2>

@@ -16,7 +16,7 @@
 				var $li = $( this );
 				var on = $li.find( 'input[type=checkbox]' ).is( ':checked' );
 				$li.toggleClass( 'is-off', ! on );
-				data.push( { id: $li.data( 'id' ), on: on } );
+				data.push( { id: $li.data( 'id' ), on: on, scheme: $li.find( 'select' ).val() } );
 			} );
 			save( $control, data );
 		}
@@ -24,11 +24,11 @@
 		$list.sortable( {
 			axis: 'y',
 			handle: '.phasm-modules__handle, label',
-			cancel: 'input, button',
+			cancel: 'input, button, select',
 			update: collect
 		} );
 
-		$list.on( 'change', 'input[type=checkbox]', collect );
+		$list.on( 'change', 'input[type=checkbox], select', collect );
 
 		$list.on( 'click', '.phasm-up, .phasm-down', function () {
 			var $li = $( this ).closest( 'li' );

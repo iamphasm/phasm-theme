@@ -48,6 +48,9 @@ function phasm_defaults() {
 
 		'wisdom_label'    => 'Daily wisdom',
 
+		'about_show_page_content' => false,
+		'modules_divider'         => true,
+
 		'contact_email'   => '',
 		'contact_phone'   => '',
 		'contact_address' => '',
@@ -181,9 +184,46 @@ function phasm_customize_register( $wp_customize ) {
 			'phasm_modules',
 			array(
 				'label'       => __( 'Front page modules', 'phasm' ),
-				'description' => __( 'Drag to change the order. Untick to hide a module. The hero always stays at the top.', 'phasm' ),
+				'description' => __( 'Drag to change the order, untick to hide a module, and pick Light, Grey or Dark (inverted) colours for each. The hero always stays at the top.', 'phasm' ),
 				'section'     => 'phasm_modules',
 			)
+		)
+	);
+
+	// About: optionally include the homepage's own page content.
+	$wp_customize->add_setting(
+		'about_show_page_content',
+		array(
+			'default'           => false,
+			'sanitize_callback' => 'phasm_sanitize_checkbox',
+		)
+	);
+	$wp_customize->add_control(
+		'about_show_page_content',
+		array(
+			'label'       => __( 'Also show the homepage\'s page content', 'phasm' ),
+			'description' => __( 'Adds the content of the page chosen as homepage in Settings › Reading below the About text.', 'phasm' ),
+			'type'        => 'checkbox',
+			'section'     => 'phasm_about',
+			'priority'    => 50,
+		)
+	);
+
+	// Divider line above every module.
+	$wp_customize->add_setting(
+		'modules_divider',
+		array(
+			'default'           => true,
+			'sanitize_callback' => 'phasm_sanitize_checkbox',
+		)
+	);
+	$wp_customize->add_control(
+		'modules_divider',
+		array(
+			'label'    => __( 'Show the green divider line above each module', 'phasm' ),
+			'type'     => 'checkbox',
+			'section'  => 'phasm_modules',
+			'priority' => 20,
 		)
 	);
 

@@ -2,6 +2,14 @@
 
 Theme by IamPhasm. Every change bumps `Version` in `style.css` and `PHASM_VERSION` in `functions.php`.
 
+## 1.4.0 — 2026-10-07
+- Added: green divider line above every front page module (on/off in Customize › PHASM front page › Modules).
+- Added: colour scheme per module: Light, Grey or Dark (inverted), picked next to each module in the Modules list.
+- Changed: a module with nothing to show (no posts, no quotes) leaves no empty band.
+
+## 1.3.1 — 2026-10-07
+- Fixed: the About module no longer pulls in the homepage's page content (e.g. a "Sign up" block) by default. New checkbox in Customize › PHASM front page › About to show it.
+
 ## 1.3.0 — 2026-10-07
 - Added: front page modules (What we do, About, Daily wisdom, Insights, Start a conversation). Turn each on or off and drag them into any order in Customize › PHASM front page › Modules.
 - Added: Daily wisdom module. Add quotes with "+ Add quote" (quote and author); one quote is shown per day, in rotation.

@@ -7,7 +7,7 @@
  */
 
 ?>
-<section id="about" class="section section--panel">
+<section id="about" class="section">
 	<div class="container grid-2">
 		<div style="display:flex;flex-direction:column;gap:var(--space-2)">
 			<div class="label label--accent"><?php esc_html_e( 'About', 'phasm' ); ?></div>
@@ -16,8 +16,8 @@
 		<div class="about__body">
 			<?php echo wpautop( esc_html( phasm_mod( 'about_text' ) ) ); // phpcs:ignore ?>
 			<?php
-			// Content of the static front page (if any) is shown here too.
-			if ( 'page' === get_option( 'show_on_front' ) ) {
+			// Optional: content of the page set as homepage (Settings › Reading).
+			if ( phasm_mod( 'about_show_page_content' ) && 'page' === get_option( 'show_on_front' ) ) {
 				while ( have_posts() ) {
 					the_post();
 					the_content();
