@@ -1,0 +1,40 @@
+# Builds phasm.zip and publishes a GitHub release when you push a version tag (v1.2.0, v1.3.0 …).
+# WordPress sites running the PHASM theme pick up the release as an update.
+name: Release theme
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check tag matches theme version
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          CSS=$(grep -m1 '^Version:' style.css | awk '{print $2}')
+          PHP=$(grep -m1 "PHASM_VERSION" functions.php | sed -E "s/.*'([0-9.]+)'.*/\1/")
+          echo "tag=$TAG style.css=$CSS functions.php=$PHP"
+          if [ "$TAG" != "$CSS" ] || [ "$TAG" != "$PHP" ]; then
+            echo "::error::Tag v$TAG does not match Version in style.css ($CSS) and PHASM_VERSION ($PHP)"
+            exit 1
+          fi
+
+      - name: Build phasm.zip
+        run: |
+          mkdir -p build/phasm
+          rsync -a --exclude '.git' --exclude '.github' --exclude 'build' ./ build/phasm/
+          cd build && zip -rq ../phasm.zip phasm
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: phasm.zip
+          generate_release_notes: true
