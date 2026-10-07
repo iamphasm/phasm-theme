@@ -25,6 +25,7 @@ function phasm_mail_settings() {
 		'from_email' => '',
 		'from_name'  => get_bloginfo( 'name' ),
 		'notify'     => get_option( 'admin_email' ),
+		'signature'  => "Best Regards,\nPhasm",
 		'all_mail'   => 0,
 	);
 	return wp_parse_args( (array) get_option( 'phasm_mail', array() ), $defaults );
@@ -181,6 +182,7 @@ function phasm_settings_save() {
 		'from_name'  => isset( $in['from_name'] ) ? sanitize_text_field( $in['from_name'] ) : '',
 		'notify'     => isset( $in['notify'] ) ? sanitize_email( $in['notify'] ) : '',
 		'all_mail'   => empty( $in['all_mail'] ) ? 0 : 1,
+		'signature'  => isset( $in['signature'] ) && '' !== trim( $in['signature'] ) ? sanitize_textarea_field( $in['signature'] ) : "Best Regards,\nPhasm",
 	);
 	if ( ! empty( $in['clear_password'] ) ) {
 		$new['password'] = '';
@@ -277,6 +279,11 @@ function phasm_settings_page() {
 					<th scope="row"><label for="phasm-notify"><?php esc_html_e( 'Notify me at', 'phasm' ); ?></label></th>
 					<td><input name="notify" id="phasm-notify" type="email" class="regular-text" value="<?php echo esc_attr( $s['notify'] ); ?>">
 						<p class="description"><?php esc_html_e( 'You get a notification here for each new message. Leave empty for no notifications.', 'phasm' ); ?></p></td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="phasm-sig"><?php esc_html_e( 'Signature on answers', 'phasm' ); ?></label></th>
+					<td><textarea name="signature" id="phasm-sig" rows="3" class="regular-text"><?php echo esc_textarea( $s['signature'] ); ?></textarea>
+						<p class="description"><?php esc_html_e( 'Added below every answer you send from Site inbox.', 'phasm' ); ?></p></td>
 				</tr>
 				<tr>
 					<th scope="row"><?php esc_html_e( 'All WordPress e-mails', 'phasm' ); ?></th>

@@ -2,6 +2,12 @@
 
 Theme by IamPhasm. Every change bumps `Version` in `style.css` and `PHASM_VERSION` in `functions.php`.
 
+## 1.6.0 — 2026-10-07
+- Added: answer an enquiry from Site inbox. Write the answer on the message and press Send answer; it is e-mailed to the customer from your sender address with the signature ("Best Regards, Phasm" by default) and a quote of their message. Earlier answers are listed on the message. Option to close the enquiry after sending.
+- Added: internal notes on each message (Add note), with date and who wrote it. Notes can be deleted and are never sent.
+- Added: "Answered" column in the message lists, with the number of answers and notes.
+- Added: Signature on answers, in Site inbox › Email settings.
+
 ## 1.5.0 — 2026-10-07
 - Added: contact form. "Start a conversation" opens it in the middle of the page with the site blurred behind; Name, E-mail, Phone, Message (max 400 characters), Send, Reset and a close button. After sending it shows a thank-you message with the PHASM logo. Links to #contact-form open it from anywhere.
 - Added: Site inbox in the admin, with Messages and Closed messages. Close a message with the Closed checkbox on the message, or Close/Reopen in the list. The menu shows how many messages are open.
