@@ -46,6 +46,8 @@ function phasm_defaults() {
 		'cta_text'        => 'One sentence inviting contact, and what happens next.',
 		'cta_label'       => 'Contact us',
 
+		'wisdom_label'    => 'Daily wisdom',
+
 		'contact_email'   => '',
 		'contact_phone'   => '',
 		'contact_address' => '',
@@ -65,35 +67,58 @@ function phasm_mod( $key ) {
  * Register Customizer sections and controls.
  */
 function phasm_customize_register( $wp_customize ) {
+	require_once get_template_directory() . '/inc/customizer-controls.php';
 	$defaults = phasm_defaults();
 
-	$wp_customize->add_section( 'phasm_front', array( 'title' => __( 'PHASM front page', 'phasm' ), 'priority' => 30 ) );
+	// Panel: PHASM front page, one section per module.
+	$wp_customize->add_panel( 'phasm_front_panel', array( 'title' => __( 'PHASM front page', 'phasm' ), 'priority' => 30 ) );
+	$phasm_sections = array(
+		'phasm_modules'  => __( 'Modules: order & on/off', 'phasm' ),
+		'phasm_hero'     => __( 'Hero', 'phasm' ),
+		'phasm_services' => __( 'What we do', 'phasm' ),
+		'phasm_about'    => __( 'About', 'phasm' ),
+		'phasm_wisdom'   => __( 'Daily wisdom', 'phasm' ),
+		'phasm_cta'      => __( 'Start a conversation', 'phasm' ),
+	);
+	$phasm_prio = 10;
+	foreach ( $phasm_sections as $phasm_id => $phasm_title ) {
+		$wp_customize->add_section(
+			$phasm_id,
+			array(
+				'title'    => $phasm_title,
+				'panel'    => 'phasm_front_panel',
+				'priority' => $phasm_prio,
+			)
+		);
+		$phasm_prio += 10;
+	}
 	$wp_customize->add_section( 'phasm_contact', array( 'title' => __( 'PHASM contact & footer', 'phasm' ), 'priority' => 31 ) );
 
 	$fields = array(
-		'hero_overline'   => array( 'Hero overline', 'text', 'phasm_front' ),
-		'hero_title'      => array( 'Hero title', 'text', 'phasm_front' ),
-		'hero_text'       => array( 'Hero text', 'textarea', 'phasm_front' ),
-		'hero_btn1_label' => array( 'Primary button label', 'text', 'phasm_front' ),
-		'hero_btn1_url'   => array( 'Primary button link', 'url', 'phasm_front' ),
-		'hero_btn2_label' => array( 'Secondary button label', 'text', 'phasm_front' ),
-		'hero_btn2_url'   => array( 'Secondary button link', 'url', 'phasm_front' ),
-		'services_title'  => array( 'Services title', 'text', 'phasm_front' ),
-		'services_intro'  => array( 'Services intro', 'textarea', 'phasm_front' ),
-		'service_1_title' => array( 'Service 1 title', 'text', 'phasm_front' ),
-		'service_1_text'  => array( 'Service 1 text', 'textarea', 'phasm_front' ),
-		'service_1_url'   => array( 'Service 1 link', 'url', 'phasm_front' ),
-		'service_2_title' => array( 'Service 2 title', 'text', 'phasm_front' ),
-		'service_2_text'  => array( 'Service 2 text', 'textarea', 'phasm_front' ),
-		'service_2_url'   => array( 'Service 2 link', 'url', 'phasm_front' ),
-		'service_3_title' => array( 'Service 3 title', 'text', 'phasm_front' ),
-		'service_3_text'  => array( 'Service 3 text', 'textarea', 'phasm_front' ),
-		'service_3_url'   => array( 'Service 3 link', 'url', 'phasm_front' ),
-		'about_title'     => array( 'About title', 'text', 'phasm_front' ),
-		'about_text'      => array( 'About text (blank line = new paragraph)', 'textarea', 'phasm_front' ),
-		'cta_title'       => array( 'CTA title', 'text', 'phasm_front' ),
-		'cta_text'        => array( 'CTA text', 'textarea', 'phasm_front' ),
-		'cta_label'       => array( 'CTA button label', 'text', 'phasm_front' ),
+		'hero_overline'   => array( 'Hero overline', 'text', 'phasm_hero' ),
+		'hero_title'      => array( 'Hero title', 'text', 'phasm_hero' ),
+		'hero_text'       => array( 'Hero text', 'textarea', 'phasm_hero' ),
+		'hero_btn1_label' => array( 'Primary button label', 'text', 'phasm_hero' ),
+		'hero_btn1_url'   => array( 'Primary button link', 'url', 'phasm_hero' ),
+		'hero_btn2_label' => array( 'Secondary button label', 'text', 'phasm_hero' ),
+		'hero_btn2_url'   => array( 'Secondary button link', 'url', 'phasm_hero' ),
+		'services_title'  => array( 'Services title', 'text', 'phasm_services' ),
+		'services_intro'  => array( 'Services intro', 'textarea', 'phasm_services' ),
+		'service_1_title' => array( 'Service 1 title', 'text', 'phasm_services' ),
+		'service_1_text'  => array( 'Service 1 text', 'textarea', 'phasm_services' ),
+		'service_1_url'   => array( 'Service 1 link', 'url', 'phasm_services' ),
+		'service_2_title' => array( 'Service 2 title', 'text', 'phasm_services' ),
+		'service_2_text'  => array( 'Service 2 text', 'textarea', 'phasm_services' ),
+		'service_2_url'   => array( 'Service 2 link', 'url', 'phasm_services' ),
+		'service_3_title' => array( 'Service 3 title', 'text', 'phasm_services' ),
+		'service_3_text'  => array( 'Service 3 text', 'textarea', 'phasm_services' ),
+		'service_3_url'   => array( 'Service 3 link', 'url', 'phasm_services' ),
+		'about_title'     => array( 'About title', 'text', 'phasm_about' ),
+		'about_text'      => array( 'About text (blank line = new paragraph)', 'textarea', 'phasm_about' ),
+		'cta_title'       => array( 'CTA title', 'text', 'phasm_cta' ),
+		'cta_text'        => array( 'CTA text', 'textarea', 'phasm_cta' ),
+		'cta_label'       => array( 'CTA button label', 'text', 'phasm_cta' ),
+		'wisdom_label'    => array( 'Module label', 'text', 'phasm_wisdom' ),
 		'contact_email'   => array( 'Email', 'email', 'phasm_contact' ),
 		'contact_phone'   => array( 'Phone', 'text', 'phasm_contact' ),
 		'contact_address' => array( 'Address', 'textarea', 'phasm_contact' ),
@@ -136,11 +161,52 @@ function phasm_customize_register( $wp_customize ) {
 				'label'    => sprintf( __( 'Service %d icon', 'phasm' ), $i ),
 				'type'     => 'select',
 				'choices'  => $phasm_icon_choices,
-				'section'  => 'phasm_front',
+				'section'  => 'phasm_services',
 				'priority' => 20 + $i,
 			)
 		);
 	}
+
+	// Modules: order and on/off (drag and drop).
+	$wp_customize->add_setting(
+		'phasm_modules',
+		array(
+			'default'           => phasm_modules_default(),
+			'sanitize_callback' => 'phasm_sanitize_modules',
+		)
+	);
+	$wp_customize->add_control(
+		new Phasm_Modules_Control(
+			$wp_customize,
+			'phasm_modules',
+			array(
+				'label'       => __( 'Front page modules', 'phasm' ),
+				'description' => __( 'Drag to change the order. Untick to hide a module. The hero always stays at the top.', 'phasm' ),
+				'section'     => 'phasm_modules',
+			)
+		)
+	);
+
+	// Daily wisdom quotes (repeater).
+	$wp_customize->add_setting(
+		'phasm_wisdom_quotes',
+		array(
+			'default'           => phasm_wisdom_default(),
+			'sanitize_callback' => 'phasm_sanitize_wisdom',
+		)
+	);
+	$wp_customize->add_control(
+		new Phasm_Quotes_Control(
+			$wp_customize,
+			'phasm_wisdom_quotes',
+			array(
+				'label'       => __( 'Quotes', 'phasm' ),
+				'description' => __( 'One quote is shown per day, in rotation. Drag a quote by its number to reorder.', 'phasm' ),
+				'section'     => 'phasm_wisdom',
+				'priority'    => 20,
+			)
+		)
+	);
 
 	// Site Identity: show or hide the site title next to the logo.
 	$wp_customize->add_setting(
@@ -167,7 +233,7 @@ function phasm_customize_register( $wp_customize ) {
 			'hero_image',
 			array(
 				'label'     => __( 'Hero image (4:3)', 'phasm' ),
-				'section'   => 'phasm_front',
+				'section'   => 'phasm_hero',
 				'mime_type' => 'image',
 			)
 		)

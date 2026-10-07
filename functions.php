@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'PHASM_VERSION', '1.2.2' ); // Keep in sync with "Version" in style.css.
+define( 'PHASM_VERSION', '1.3.0' ); // Keep in sync with "Version" in style.css.
 
 /**
  * Theme setup.
@@ -317,5 +317,6 @@ function phasm_widgets_init() {
 }
 add_action( 'widgets_init', 'phasm_widgets_init' );
 
+require get_template_directory() . '/inc/modules.php';
 require get_template_directory() . '/inc/customizer.php';
 require get_template_directory() . '/inc/updater.php';

@@ -2,6 +2,11 @@
 
 Theme by IamPhasm. Every change bumps `Version` in `style.css` and `PHASM_VERSION` in `functions.php`.
 
+## 1.3.0 — 2026-10-07
+- Added: front page modules (What we do, About, Daily wisdom, Insights, Start a conversation). Turn each on or off and drag them into any order in Customize › PHASM front page › Modules.
+- Added: Daily wisdom module. Add quotes with "+ Add quote" (quote and author); one quote is shown per day, in rotation.
+- Changed: PHASM front page settings are now a panel with one section per module.
+
 ## 1.2.2 — 2026-10-07
 - Added: "Show site title next to the logo" checkbox in Customize › Site Identity (off by default).
 
