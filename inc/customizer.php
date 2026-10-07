@@ -142,6 +142,24 @@ function phasm_customize_register( $wp_customize ) {
 		);
 	}
 
+	// Site Identity: show or hide the site title next to the logo.
+	$wp_customize->add_setting(
+		'phasm_show_site_title',
+		array(
+			'default'           => false,
+			'sanitize_callback' => 'phasm_sanitize_checkbox',
+		)
+	);
+	$wp_customize->add_control(
+		'phasm_show_site_title',
+		array(
+			'label'    => __( 'Show site title next to the logo', 'phasm' ),
+			'type'     => 'checkbox',
+			'section'  => 'title_tagline',
+			'priority' => 9,
+		)
+	);
+
 	$wp_customize->add_setting( 'hero_image', array( 'default' => 0, 'sanitize_callback' => 'absint' ) );
 	$wp_customize->add_control(
 		new WP_Customize_Media_Control(
@@ -156,6 +174,13 @@ function phasm_customize_register( $wp_customize ) {
 	);
 }
 add_action( 'customize_register', 'phasm_customize_register' );
+
+/**
+ * Checkbox sanitizer.
+ */
+function phasm_sanitize_checkbox( $checked ) {
+	return ( isset( $checked ) && true === (bool) $checked );
+}
 
 /**
  * Only allow icon slugs defined in phasm_service_icons().

@@ -2,6 +2,9 @@
 
 Theme by IamPhasm. Every change bumps `Version` in `style.css` and `PHASM_VERSION` in `functions.php`.
 
+## 1.2.2 — 2026-10-07
+- Added: "Show site title next to the logo" checkbox in Customize › Site Identity (off by default).
+
 ## 1.2.1 — 2026-10-07
 - Added: "Back to top" link in the footer, with smooth scrolling (off when the visitor prefers reduced motion).
 

@@ -17,8 +17,11 @@
 
 <header class="site-header">
 	<div class="container site-header__inner">
-		<a class="site-branding" href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home" aria-label="<?php echo esc_attr( get_bloginfo( 'name' ) . ' — ' . __( 'home', 'phasm' ) ); ?>">
+		<a class="site-branding" href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home">
 			<?php phasm_logo( 40 ); ?>
+			<?php if ( phasm_show_site_title() ) : ?>
+				<span class="site-title"><?php bloginfo( 'name' ); ?></span>
+			<?php endif; ?>
 		</a>
 
 		<button class="menu-toggle" aria-controls="primary-nav" aria-expanded="false">

@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'PHASM_VERSION', '1.2.1' ); // Keep in sync with "Version" in style.css.
+define( 'PHASM_VERSION', '1.2.2' ); // Keep in sync with "Version" in style.css.
 
 /**
  * Theme setup.
@@ -141,6 +141,14 @@ function phasm_logo( $height = 40 ) {
 		esc_attr( get_bloginfo( 'name' ) ),
 		(int) $height
 	);
+}
+
+/**
+ * Whether the site title is shown next to the logo (Customize > Site Identity).
+ * Off by default, because the PHASM logo already shows the name.
+ */
+function phasm_show_site_title() {
+	return (bool) get_theme_mod( 'phasm_show_site_title', false );
 }
 
 /**
